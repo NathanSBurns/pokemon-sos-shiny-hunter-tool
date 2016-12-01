@@ -8,10 +8,11 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTextPane;
 import java.awt.Font;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
 
 public class HelpShortcut {
 
-	private JFrame frame;
+	private JFrame frmShortcuts;
 
 	/**
 	 * Launch the application.
@@ -21,7 +22,7 @@ public class HelpShortcut {
 			public void run() {
 				try {
 					HelpShortcut window = new HelpShortcut();
-					window.frame.setVisible(true);
+					window.frmShortcuts.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -40,9 +41,12 @@ public class HelpShortcut {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmShortcuts = new JFrame();
+		frmShortcuts.setIconImage(Toolkit.getDefaultToolkit().getImage(Frame1.class.getResource("/pokemon_move_tracker/shiny_charm.gif")));
+		frmShortcuts.setResizable(false);
+		frmShortcuts.setTitle("Shortcuts");
+		frmShortcuts.setBounds(100, 100, 450, 300);
+		frmShortcuts.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		JTextPane txtpnAsOfRight = new JTextPane();
 		txtpnAsOfRight.setEditable(false);
@@ -50,7 +54,7 @@ public class HelpShortcut {
 		txtpnAsOfRight.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		txtpnAsOfRight.setText(
 				"As of right now, there is only one keyboard shortcut.  The shortcut is on the main window (where the encounter count is located).  If you want to increment the encounter number, just press \u201CEnter.\u201D  More shortcuts will be added in later updates.");
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		GroupLayout groupLayout = new GroupLayout(frmShortcuts.getContentPane());
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup().addContainerGap()
 						.addComponent(txtpnAsOfRight, GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
@@ -59,7 +63,7 @@ public class HelpShortcut {
 				.addGroup(groupLayout.createSequentialGroup().addContainerGap()
 						.addComponent(txtpnAsOfRight, GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
 						.addContainerGap()));
-		frame.getContentPane().setLayout(groupLayout);
+		frmShortcuts.getContentPane().setLayout(groupLayout);
 	}
 
 }

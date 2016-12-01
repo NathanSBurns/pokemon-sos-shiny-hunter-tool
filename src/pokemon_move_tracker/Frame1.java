@@ -21,10 +21,14 @@ import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.Toolkit;
 
 public class Frame1 {
 
-	private JFrame frame;
+	private static JFrame frmPokemonSosHelper;
 	private static int currentTextArea;
 	private static JTextArea move1TextArea = new JTextArea();
 	private static JTextArea move2TextArea = new JTextArea();
@@ -34,8 +38,33 @@ public class Frame1 {
 	private static JLabel move2PP = new JLabel("20");
 	private static JLabel move3PP = new JLabel("20");
 	private static JLabel move4PP = new JLabel("20");
-	private JLabel numberOfEncounters = new JLabel("1");
-	private JLabel odds = new JLabel(Double.parseDouble(numberOfEncounters.getText()) * 100 / 512 + "%");
+	private static JLabel numberOfEncounters = new JLabel("1");
+	private static JLabel odds = new JLabel(Double.parseDouble(numberOfEncounters.getText()) * 100 / 512 + "%");
+	private static JCheckBox chckbxShinyCharm = new JCheckBox("Shiny Charm");
+
+	// used because I really don't want to enter in all of the PP values for
+	// every move again
+	private static String defaultPP1;
+	private static String defaultPP2;
+	private static String defaultPP3;
+	private static String defaultPP4;
+
+	public static void setDefaultPP() {
+		switch (currentTextArea) {
+		case 1:
+			defaultPP1 = move1PP.getText();
+			break;
+		case 2:
+			defaultPP2 = move2PP.getText();
+			break;
+		case 3:
+			defaultPP3 = move2PP.getText();
+			break;
+		case 4:
+			defaultPP4 = move4PP.getText();
+			break;
+		}
+	}
 
 	public static int getCurrentTextArea() {
 		return currentTextArea;
@@ -75,6 +104,21 @@ public class Frame1 {
 		}
 	}
 
+	public static String getMovePP() {
+		switch (currentTextArea) {
+		case 1:
+			return move1PP.getText();
+		case 2:
+			return move2PP.getText();
+		case 3:
+			return move3PP.getText();
+		case 4:
+			return move4PP.getText();
+		default:
+			return "0";
+		}
+	}
+
 	/**
 	 * Launch the application.
 	 */
@@ -83,7 +127,7 @@ public class Frame1 {
 			public void run() {
 				try {
 					Frame1 window = new Frame1();
-					window.frame.setVisible(true);
+					window.frmPokemonSosHelper.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -102,22 +146,24 @@ public class Frame1 {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.getContentPane().addKeyListener(new KeyAdapter() {
+		frmPokemonSosHelper = new JFrame();
+		frmPokemonSosHelper.setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(Frame1.class.getResource("/pokemon_move_tracker/shiny_charm.gif")));
+		frmPokemonSosHelper.setResizable(false);
+		frmPokemonSosHelper.setTitle("Pokemon S.O.S. Helper");
+		frmPokemonSosHelper.getContentPane().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent evnt) {
 				if (evnt.getKeyCode() == KeyEvent.VK_UP || evnt.getKeyCode() == KeyEvent.VK_KP_UP) {
-					numberOfEncounters.setText((Integer.parseInt(numberOfEncounters.getText()) + 1) + "");
-					odds.setText(Double.parseDouble(numberOfEncounters.getText()) * 100 / 512 + "%");
+					incEncounter();
 				} else if (evnt.getKeyCode() == KeyEvent.VK_DOWN || evnt.getKeyCode() == KeyEvent.VK_KP_DOWN) {
-					numberOfEncounters.setText((Integer.parseInt(numberOfEncounters.getText()) - 1) + "");
-					odds.setText(Double.parseDouble(numberOfEncounters.getText()) * 100 / 512 + "%");
+					decEncounter();
 				}
 			}
 		});
 
-		frame.setBounds(100, 100, 828, 565);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmPokemonSosHelper.setBounds(100, 100, 828, 417);
+		frmPokemonSosHelper.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		move1TextArea.setEditable(false);
 
 		// used to select move 1
@@ -271,8 +317,7 @@ public class Frame1 {
 		JButton button_8 = new JButton("+");
 		button_8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				numberOfEncounters.setText((Integer.parseInt(numberOfEncounters.getText()) + 1) + "");
-				odds.setText(Double.parseDouble(numberOfEncounters.getText()) * 100 / 512 + "%");
+				incEncounter();
 			}
 		});
 		button_8.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -281,90 +326,112 @@ public class Frame1 {
 		JButton button_9 = new JButton("\u2013");
 		button_9.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (!(Integer.parseInt(numberOfEncounters.getText()) < 0)) {
-					numberOfEncounters.setText((Integer.parseInt(numberOfEncounters.getText()) - 1) + "");
-					odds.setText(Double.parseDouble(numberOfEncounters.getText()) * 100 / 512 + "%");
-				}
+				decEncounter();
 			}
 		});
 		button_9.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		frame.getRootPane().setDefaultButton(button_8);
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		frmPokemonSosHelper.getRootPane().setDefaultButton(button_8);
+
+		JButton btnResetPp = new JButton("Reset PP");
+		btnResetPp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				move1PP.setText(defaultPP1);
+				move2PP.setText(defaultPP2);
+				move3PP.setText(defaultPP3);
+				move4PP.setText(defaultPP4);
+			}
+		});
+
+		GroupLayout groupLayout = new GroupLayout(frmPokemonSosHelper.getContentPane());
 		groupLayout
 				.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup().addGap(10)
-								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblMove, GroupLayout.PREFERRED_SIZE, 109,
-												GroupLayout.PREFERRED_SIZE)
-										.addGroup(groupLayout.createSequentialGroup()
-												.addComponent(move1TextArea, GroupLayout.PREFERRED_SIZE, 142,
+						.addGroup(groupLayout.createSequentialGroup().addGroup(groupLayout
+								.createParallelGroup(Alignment.LEADING).addGroup(groupLayout.createSequentialGroup()
+										.addGap(10).addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+												.addComponent(lblMove, GroupLayout.PREFERRED_SIZE, 109,
 														GroupLayout.PREFERRED_SIZE)
-												.addGap(10)
-												.addComponent(move1PP, GroupLayout.PREFERRED_SIZE, 21,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(10)
-												.addComponent(pp1Up, GroupLayout.PREFERRED_SIZE, 56,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(1)
-												.addComponent(pp1Down, GroupLayout.PREFERRED_SIZE, 56,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(90)
-												.addComponent(lblEncounters, GroupLayout.PREFERRED_SIZE, 119,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(10)
-												.addComponent(numberOfEncounters, GroupLayout.PREFERRED_SIZE, 67,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(10)
-												.addComponent(button_8, GroupLayout.PREFERRED_SIZE, 56,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(1).addComponent(button_9, GroupLayout.PREFERRED_SIZE, 56,
-														GroupLayout.PREFERRED_SIZE))
-										.addGroup(groupLayout.createSequentialGroup()
-												.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-														.addComponent(lblMove_1, GroupLayout.PREFERRED_SIZE, 109,
+												.addGroup(groupLayout.createSequentialGroup()
+														.addComponent(move1TextArea, GroupLayout.PREFERRED_SIZE, 142,
 																GroupLayout.PREFERRED_SIZE)
-														.addComponent(move2TextArea, GroupLayout.PREFERRED_SIZE, 142,
-																GroupLayout.PREFERRED_SIZE))
-												.addGap(10)
-												.addComponent(move2PP, GroupLayout.PREFERRED_SIZE, 21,
+														.addGap(10)
+														.addComponent(move1PP, GroupLayout.PREFERRED_SIZE, 21,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(10)
+														.addComponent(pp1Up, GroupLayout.PREFERRED_SIZE, 56,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(1)
+														.addComponent(pp1Down, GroupLayout.PREFERRED_SIZE, 56,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(90)
+														.addComponent(lblEncounters, GroupLayout.PREFERRED_SIZE, 119,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(10)
+														.addComponent(numberOfEncounters, GroupLayout.PREFERRED_SIZE,
+																67, GroupLayout.PREFERRED_SIZE)
+														.addGap(10)
+														.addComponent(button_8, GroupLayout.PREFERRED_SIZE, 56,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(1).addComponent(button_9, GroupLayout.PREFERRED_SIZE,
+																56, GroupLayout.PREFERRED_SIZE))
+												.addGroup(groupLayout.createSequentialGroup()
+														.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+																.addComponent(lblMove_1, GroupLayout.PREFERRED_SIZE,
+																		109, GroupLayout.PREFERRED_SIZE)
+																.addComponent(move2TextArea, GroupLayout.PREFERRED_SIZE,
+																		142, GroupLayout.PREFERRED_SIZE))
+														.addGap(10)
+														.addComponent(move2PP, GroupLayout.PREFERRED_SIZE, 21,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(10)
+														.addComponent(button_3, GroupLayout.PREFERRED_SIZE, 56,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(1)
+														.addComponent(pp2Down, GroupLayout.PREFERRED_SIZE, 56,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(90)
+														.addComponent(lblOdds, GroupLayout.PREFERRED_SIZE, 119,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(10)
+														.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+																.addComponent(chckbxShinyCharm).addComponent(odds,
+																		GroupLayout.PREFERRED_SIZE, 150,
+																		GroupLayout.PREFERRED_SIZE)))
+												.addComponent(lblMove_2, GroupLayout.PREFERRED_SIZE, 109,
 														GroupLayout.PREFERRED_SIZE)
-												.addGap(10)
-												.addComponent(button_3, GroupLayout.PREFERRED_SIZE, 56,
+												.addGroup(groupLayout.createSequentialGroup()
+														.addComponent(move3TextArea, GroupLayout.PREFERRED_SIZE, 142,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(10)
+														.addComponent(move3PP, GroupLayout.PREFERRED_SIZE, 21,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(10)
+														.addComponent(button_5, GroupLayout.PREFERRED_SIZE, 56,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(1).addComponent(button_4, GroupLayout.PREFERRED_SIZE,
+																56, GroupLayout.PREFERRED_SIZE))
+												.addComponent(lblMove_3, GroupLayout.PREFERRED_SIZE, 109,
 														GroupLayout.PREFERRED_SIZE)
-												.addGap(1)
-												.addComponent(pp2Down, GroupLayout.PREFERRED_SIZE, 56,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(90)
-												.addComponent(lblOdds, GroupLayout.PREFERRED_SIZE, 119,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(10).addComponent(odds, GroupLayout.PREFERRED_SIZE, 150,
-														GroupLayout.PREFERRED_SIZE))
-										.addComponent(lblMove_2, GroupLayout.PREFERRED_SIZE, 109,
-												GroupLayout.PREFERRED_SIZE)
-										.addGroup(groupLayout.createSequentialGroup()
-												.addComponent(move3TextArea, GroupLayout.PREFERRED_SIZE, 142,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(10)
-												.addComponent(move3PP, GroupLayout.PREFERRED_SIZE, 21,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(10)
-												.addComponent(button_5, GroupLayout.PREFERRED_SIZE, 56,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(1).addComponent(button_4, GroupLayout.PREFERRED_SIZE, 56,
-														GroupLayout.PREFERRED_SIZE))
-										.addComponent(lblMove_3, GroupLayout.PREFERRED_SIZE, 109,
-												GroupLayout.PREFERRED_SIZE)
-										.addGroup(groupLayout.createSequentialGroup()
-												.addComponent(move4TextArea, GroupLayout.PREFERRED_SIZE, 142,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(10)
-												.addComponent(move4PP, GroupLayout.PREFERRED_SIZE, 21,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(10)
-												.addComponent(button_7, GroupLayout.PREFERRED_SIZE, 56,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(1).addComponent(button_6, GroupLayout.PREFERRED_SIZE, 56,
-														GroupLayout.PREFERRED_SIZE)))));
+												.addGroup(groupLayout.createSequentialGroup()
+														.addComponent(move4TextArea, GroupLayout.PREFERRED_SIZE, 142,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(10)
+														.addComponent(move4PP, GroupLayout.PREFERRED_SIZE, 21,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(10)
+														.addComponent(button_7, GroupLayout.PREFERRED_SIZE, 56,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(1).addComponent(button_6, GroupLayout.PREFERRED_SIZE,
+																56, GroupLayout.PREFERRED_SIZE))))
+								.addGroup(
+										groupLayout.createSequentialGroup().addContainerGap().addComponent(btnResetPp)))
+								.addContainerGap(97, Short.MAX_VALUE)));
+
+		// automatically update the odds percentage
+		chckbxShinyCharm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateOdds();
+			}
+		});
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
 				.createSequentialGroup().addGap(11)
 				.addComponent(lblMove, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
@@ -395,8 +462,10 @@ public class Frame1 {
 								.addGroup(groupLayout.createSequentialGroup().addGap(31).addComponent(pp2Down,
 										GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE))
 								.addGroup(groupLayout.createSequentialGroup().addGap(8).addComponent(lblOdds))
-								.addGroup(groupLayout.createSequentialGroup().addGap(8).addComponent(odds)))
-				.addGap(11).addComponent(lblMove_2, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+								.addGroup(groupLayout.createSequentialGroup().addGap(8).addComponent(odds)
+										.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(chckbxShinyCharm)))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addComponent(lblMove_2, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
 				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(move3TextArea, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
 						.addGroup(groupLayout.createSequentialGroup().addGap(5).addComponent(move3PP,
@@ -409,11 +478,32 @@ public class Frame1 {
 						.addGroup(groupLayout.createSequentialGroup().addGap(5).addComponent(move4PP,
 								GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE))
 						.addComponent(button_7, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-						.addComponent(button_6, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE))));
-		frame.getContentPane().setLayout(groupLayout);
+						.addComponent(button_6, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE))
+				.addGap(18).addComponent(btnResetPp).addContainerGap(204, Short.MAX_VALUE)));
+		frmPokemonSosHelper.getContentPane().setLayout(groupLayout);
 
 		JMenuBar menuBar = new JMenuBar();
-		frame.setJMenuBar(menuBar);
+		frmPokemonSosHelper.setJMenuBar(menuBar);
+
+		JMenu mnEdit = new JMenu("Edit");
+		menuBar.add(mnEdit);
+
+		JMenuItem mntmEditEncounters = new JMenuItem("Edit Encounters");
+		mntmEditEncounters.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EditEncounters.open();
+			}
+		});
+		mnEdit.add(mntmEditEncounters);
+
+		JMenuItem mntmResetEncounters = new JMenuItem("Reset Encounters");
+		mntmResetEncounters.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				numberOfEncounters.setText("1");
+				updateOdds();
+			}
+		});
+		mnEdit.add(mntmResetEncounters);
 
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
@@ -444,5 +534,45 @@ public class Frame1 {
 			}
 		});
 		mnBasics.add(mntmAbout);
+
+		JMenuItem mntmSetEncounters = new JMenuItem("Editing Encounters");
+		mntmSetEncounters.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				HelpEditEncounters.open();
+			}
+		});
+		mnBasics.add(mntmSetEncounters);
 	}
+
+	private static void decEncounter() {
+		if ((Integer.parseInt(numberOfEncounters.getText()) > 0)) {
+			numberOfEncounters.setText((Integer.parseInt(numberOfEncounters.getText()) - 1) + "");
+			updateOdds();
+		}
+	}
+
+	private static void incEncounter() {
+		numberOfEncounters.setText((Integer.parseInt(numberOfEncounters.getText()) + 1) + "");
+		updateOdds();
+	}
+
+	private static void updateOdds() {
+		if (!chckbxShinyCharm.isSelected()) {
+			odds.setText(Double.parseDouble(numberOfEncounters.getText()) * 100 / 512 + "%");
+		} else {
+			odds.setText((Double.parseDouble(numberOfEncounters.getText()) * 100 / 512) * 3 + "%");
+		}
+	}
+
+	// enables or disables the window (used to prevent accidently opening
+	// multiple windows)
+	public static void enabled(boolean tf) {
+		frmPokemonSosHelper.setEnabled(tf);
+	}
+
+	public static void setEncounters(int num) {
+		numberOfEncounters.setText(num + "");
+		updateOdds();
+	}
+
 }

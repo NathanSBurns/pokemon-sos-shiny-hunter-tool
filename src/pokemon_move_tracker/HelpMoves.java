@@ -8,10 +8,11 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTextPane;
 import java.awt.Font;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
 
 public class HelpMoves {
 
-	private JFrame frame;
+	private JFrame frmHowToSelect;
 
 	/**
 	 * Launch the application.
@@ -21,7 +22,7 @@ public class HelpMoves {
 			public void run() {
 				try {
 					HelpMoves window = new HelpMoves();
-					window.frame.setVisible(true);
+					window.frmHowToSelect.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -40,9 +41,12 @@ public class HelpMoves {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmHowToSelect = new JFrame();
+		frmHowToSelect.setIconImage(Toolkit.getDefaultToolkit().getImage(Frame1.class.getResource("/pokemon_move_tracker/shiny_charm.gif")));
+		frmHowToSelect.setResizable(false);
+		frmHowToSelect.setTitle("How To Select Moves");
+		frmHowToSelect.setBounds(100, 100, 450, 300);
+		frmHowToSelect.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		JTextPane txtpnInOrderTo = new JTextPane();
 		txtpnInOrderTo.setEditable(false);
@@ -50,7 +54,7 @@ public class HelpMoves {
 		txtpnInOrderTo.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		txtpnInOrderTo.setText(
 				"In order to select a move, click on one of the text areas.  A window should pop up with a list of moves.  You can either scroll down to select a move or you can type the name of the move (typing will immediately go to a move matching the input).  Once the desired move is highlighted, hit the \u201CSelect\u201D button or press \u201CEnter\u201D on the keyboard to select the move.");
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		GroupLayout groupLayout = new GroupLayout(frmHowToSelect.getContentPane());
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup().addContainerGap()
 						.addComponent(txtpnInOrderTo, GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
@@ -59,7 +63,7 @@ public class HelpMoves {
 				.addGroup(groupLayout.createSequentialGroup().addContainerGap()
 						.addComponent(txtpnInOrderTo, GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
 						.addContainerGap()));
-		frame.getContentPane().setLayout(groupLayout);
+		frmHowToSelect.getContentPane().setLayout(groupLayout);
 	}
 
 }

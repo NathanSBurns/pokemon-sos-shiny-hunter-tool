@@ -11,10 +11,11 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
 
 public class HelpAbout {
 
-	private JFrame frame;
+	private JFrame frmAbout;
 
 	/**
 	 * Launch the application.
@@ -24,7 +25,7 @@ public class HelpAbout {
 			public void run() {
 				try {
 					HelpAbout window = new HelpAbout();
-					window.frame.setVisible(true);
+					window.frmAbout.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -43,9 +44,12 @@ public class HelpAbout {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 611, 421);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmAbout = new JFrame();
+		frmAbout.setIconImage(Toolkit.getDefaultToolkit().getImage(Frame1.class.getResource("/pokemon_move_tracker/shiny_charm.gif")));
+		frmAbout.setResizable(false);
+		frmAbout.setTitle("About");
+		frmAbout.setBounds(100, 100, 611, 421);
+		frmAbout.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JTextPane txtpnThisProgramWas = new JTextPane();
 		txtpnThisProgramWas.setBackground(SystemColor.menu);
@@ -57,7 +61,7 @@ public class HelpAbout {
 		txtpnIfYouHave.setBackground(SystemColor.menu);
 		txtpnIfYouHave.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		txtpnIfYouHave.setText("If you have any problems while using this program, please let me know using one of the following contacts:\r\n\r\nEmail \u2013 nateb@hotmail.com.\r\nTwitter \u2013 twitter.com/Hyginx");
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		GroupLayout groupLayout = new GroupLayout(frmAbout.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
@@ -76,7 +80,7 @@ public class HelpAbout {
 					.addComponent(txtpnIfYouHave, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(32, Short.MAX_VALUE))
 		);
-		frame.getContentPane().setLayout(groupLayout);
+		frmAbout.getContentPane().setLayout(groupLayout);
 	}
 
 }

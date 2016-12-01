@@ -7,6 +7,8 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.Toolkit;
+
 import javax.swing.JButton;
 import javax.swing.AbstractListModel;
 import javax.swing.JScrollBar;
@@ -15,10 +17,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class MoveSelector {
 
-	private JFrame frame;
+	private JFrame frmMoveSelector;
 	private static JList list = new JList();
 
 	/**
@@ -29,7 +33,7 @@ public class MoveSelector {
 			public void run() {
 				try {
 					MoveSelector window = new MoveSelector();
-					window.frame.setVisible(true);
+					window.frmMoveSelector.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -48,31 +52,29 @@ public class MoveSelector {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.getContentPane().addKeyListener(new KeyAdapter() {
+		frmMoveSelector = new JFrame();
+		frmMoveSelector.setIconImage(Toolkit.getDefaultToolkit().getImage(Frame1.class.getResource("/pokemon_move_tracker/shiny_charm.gif")));
+		frmMoveSelector.addWindowListener(new WindowAdapter() {
 			@Override
-			// pressing enter acts as pressing the submit button.
-			public void keyPressed(KeyEvent evnt) {
-				if (evnt.getKeyCode() == KeyEvent.VK_ENTER) {
-					// sets move 1 to the selected move
-					Frame1.setMove(list.getSelectedValue().toString());
-					// sets the PP
-					setPP();
-				}
+			public void windowClosed(WindowEvent arg0) {
+				Frame1.enabled(true);
 			}
 		});
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmMoveSelector.setResizable(false);
+		Frame1.enabled(false);
+		frmMoveSelector.setTitle("Move Selector");
+		frmMoveSelector.setBounds(100, 100, 450, 300);
+		frmMoveSelector.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmMoveSelector.getContentPane().setLayout(null);
 
 		JLabel lblSelectAMove = new JLabel("Select a move");
 		lblSelectAMove.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
 		lblSelectAMove.setBounds(247, 11, 151, 34);
-		frame.getContentPane().add(lblSelectAMove);
+		frmMoveSelector.getContentPane().add(lblSelectAMove);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 19, 197, 239);
-		frame.getContentPane().add(scrollPane);
+		frmMoveSelector.getContentPane().add(scrollPane);
 
 		scrollPane.setViewportView(list);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -198,20 +200,22 @@ public class MoveSelector {
 		list.setToolTipText("");
 		list.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
-		JButton btnSelect = new JButton("Select");
+		JButton btnSelect = new JButton("Submit");
 		btnSelect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// sets move 1 to the selected move
 				Frame1.setMove(list.getSelectedValue().toString());
 				// sets the PP
 				setPP();
-				frame.dispose();
+				Frame1.setDefaultPP();
+				Frame1.enabled(true);
+				frmMoveSelector.dispose();
 			}
 		});
 		btnSelect.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		btnSelect.setBounds(335, 227, 89, 23);
-		frame.getContentPane().add(btnSelect);
-		frame.getRootPane().setDefaultButton(btnSelect);
+		frmMoveSelector.getContentPane().add(btnSelect);
+		frmMoveSelector.getRootPane().setDefaultButton(btnSelect);
 
 	}
 
